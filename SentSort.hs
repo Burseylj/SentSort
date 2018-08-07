@@ -1,6 +1,7 @@
 import Data.List
 import Data.List.Split 
 import Data.Char
+import System.Environment (getArgs)
 
 -- Input: String
 -- Output: The letters of the string in stable order
@@ -35,8 +36,10 @@ trim = dropWhileEnd isSpace . dropWhile isSpace
 
 -- Input: English writing in standard format as text file
 -- Output: Line separated alphabetized list of sentences in the writing, as text file
+main :: IO()
 main = do  
-    contents <- readFile "TheLastQuestion.txt"  
+    args <- getArgs                      
+    contents <- readFile (head args)
     let sorted = sort' . cleanSents . getSents $ contents
         
     writeFile "Output.txt" (intercalate "\n" sorted)
