@@ -15,14 +15,15 @@ getSents x = concat sents
     where sents = map ( split (endsWith ",\"") ) sentsOnPunct
           sentsOnPunct = split (condense $ endsWithOneOf ".?!\n") x 
 
---Input: List of sentences, poorly formatted
+--Input: List oftences, poorly formatted
 --Output: List of sentences with leading and trailing whitespace removed,
 -- quotation marks removed, and sentences without words removed.
 cleanSents :: [String] -> [String]
-cleanSents xs  = filter isEmpty trimmed 
+cleanSents xs  = filter isEmpty trimmed                 --remove "sentences" with no letters
     where isEmpty = (\x -> (onlyLetters x)  /= "")
-          filtered = map (filter (\x -> x/= '\"') ) xs 
-          trimmed = map trim filtered
+          isQuote = (\x -> x/= '\"')
+          filtered = map (filter isQuote ) xs  --remove quotation marks
+          trimmed = map trim filtered                   --remove leading/trailing whitespace
           
 --Input: List of sentences
 --Output: List of sentences, alphabetically sorted, ignoring non alpha characters
