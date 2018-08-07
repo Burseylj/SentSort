@@ -1,15 +1,26 @@
-import Data.List (sortBy)
-import Data.List.Split (splitOn)
-import Data.Char(toLower,isLetter)
+import Data.List
+import Data.List.Split 
+import Data.Char
 
 
+onlyLetters :: String -> String
+onlyLetters ys = map toLower ( filter (isLetter) ys )
 
+getSents :: String -> [String]
+getSents x = cleanedSents
+    where sents = split (condense $ endsWithOneOf ".?!\n") x
+          trimmedSents = map trim sents 
+          cleanedSents = filter (\x -> (onlyLetters x)  /= "") trimmedSents
 
-myWords = "This is one sentence. This is another. \"This, is yet a third.\""
-nowSent = splitOn ". " myWords
+sort' :: [String] -> [String]
+sort' = sortBy (\x y -> compare (onlyLetters x) (onlyLetters y))
 
-makeComparable ys = map toLower $ filter (isLetter) ys 
+trim :: String -> String
+trim = dropWhileEnd isSpace . dropWhile isSpace
 
-getSents = splitOn ". "
-
-sort' = sortBy (\x y -> compare (makeComparable x) (makeComparable y))
+main = do  
+    contents <- readFile "TheLastQuestion.txt"  
+    let cleanContents = [ x | x <- contents, not (x `elem` "\"") ]
+        sorted = sort' . getSents $ cleanContents 
+        
+    writeFile "Output.txt" (intercalate "\n" sorted)
